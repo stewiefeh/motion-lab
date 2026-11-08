@@ -170,6 +170,59 @@ section{position:relative}
 .footer .big{font-size:clamp(2rem,6vw,4.6rem);font-variation-settings:"wdth" 122,"wght" 800;text-transform:uppercase;line-height:.95;max-width:12em}
 .footer .meta{margin-top:34px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;font-size:.92rem;font-variation-settings:"wdth" 96,"wght" 460;opacity:.7}
 
+
+/* ---------- 08 liquid type (melt) ---------- */
+.melt-stage{display:flex;align-items:center;justify-content:center;min-height:44vh}
+.melt-word{
+  font-size:clamp(3.5rem,14vw,12rem);text-transform:uppercase;line-height:1;
+  font-variation-settings:"wdth" 122,"wght" 850;color:var(--cobalt);
+  filter:url(#meltFilter);cursor:crosshair;
+}
+.melt-note{margin-top:26px;font-size:.95rem;font-variation-settings:"wdth" 96,"wght" 430;opacity:.7;text-align:center}
+
+/* ---------- 09 sliced reveal ---------- */
+.slice-panel{display:flex;gap:6px;height:min(56vh,480px)}
+.slice-panel .slice{flex:1;border-radius:10px;clip-path:inset(100% 0 0 0);transition:clip-path 1s cubic-bezier(.76,0,.24,1);will-change:clip-path}
+.slice-panel.in .slice{clip-path:inset(0 0 0 0)}
+.slice-note{margin-top:20px;font-size:.95rem;font-variation-settings:"wdth" 96,"wght" 430;opacity:.75}
+
+/* ---------- 10 image trail ---------- */
+.trail-panel{position:relative;height:min(60vh,520px);border-radius:18px;overflow:hidden;background:var(--white)}
+.trail-tile{position:absolute;border-radius:12px;pointer-events:none;opacity:0;will-change:transform,opacity}
+.trail-hint{position:absolute;left:22px;bottom:18px;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;opacity:.45;color:var(--ink);pointer-events:none}
+
+/* ---------- 11 cursor gallery ---------- */
+.gal{position:relative}
+.gal-row{display:flex;justify-content:space-between;align-items:baseline;gap:18px;padding:clamp(18px,3vh,30px) 6px;border-top:1px solid rgba(252,251,246,.25);font-size:clamp(1.5rem,4vw,3rem);text-transform:uppercase;font-variation-settings:"wdth" 112,"wght" 640;transition:opacity .3s ease,transform .5s cubic-bezier(.19,1,.22,1)}
+.gal-row small{font-size:.95rem;font-variation-settings:"wdth" 96,"wght" 420;opacity:.6;text-transform:none}
+.gal:hover .gal-row{opacity:.3}
+.gal .gal-row:hover{opacity:1;transform:translateX(20px)}
+.gal-peek{position:fixed;top:0;left:0;width:220px;height:280px;border-radius:14px;pointer-events:none;opacity:0;z-index:40;transition:opacity .25s ease;will-change:transform;box-shadow:0 30px 60px rgba(23,21,14,.35)}
+.gal-peek.on{opacity:1}
+@media (hover:none){.gal-peek{display:none}}
+
+/* ---------- 12 depth tilt ---------- */
+.tilt-stage{display:flex;justify-content:center;padding:16px 0;perspective:1100px}
+.tilt-card{position:relative;width:min(420px,86vw);aspect-ratio:3/4;border-radius:22px;background:var(--ink);color:var(--paper);transform-style:preserve-3d;will-change:transform}
+.tilt-card .layer{position:absolute;transform-style:preserve-3d}
+.tilt-title{top:9%;left:9%;font-size:clamp(1.6rem,3vw,2.2rem);text-transform:uppercase;font-variation-settings:"wdth" 118,"wght" 780;line-height:.95;transform:translateZ(70px)}
+.tilt-body{top:38%;left:9%;max-width:72%;font-size:.98rem;opacity:.75;transform:translateZ(42px)}
+.tilt-badge{bottom:10%;right:9%;width:clamp(52px,8vw,68px);aspect-ratio:1;border-radius:50%;background:var(--poster);transform:translateZ(110px)}
+.tilt-glare{position:absolute;inset:0;border-radius:22px;transform:translateZ(3px);background:radial-gradient(320px circle at var(--gx,50%) var(--gy,50%), rgba(255,255,255,.22), transparent 62%);pointer-events:none}
+
+/* ---------- 13 ink fill ---------- */
+.fill-stage{min-height:64vh;display:flex;align-items:center}
+.fill-word{position:relative;font-size:clamp(3.2rem,13vw,11rem);text-transform:uppercase;line-height:1;font-variation-settings:"wdth" 122,"wght" 830;white-space:nowrap}
+.fill-word .base{color:transparent;-webkit-text-stroke:2.5px var(--ink)}
+.fill-word .top{position:absolute;inset:0;color:var(--cobalt);-webkit-text-stroke:2.5px var(--cobalt);clip-path:inset(-10% 100% -10% 0)}
+.js .fill-word .top{animation:fillwipe linear both;animation-timeline:view();animation-range:entry 15% exit 65%}
+@keyframes fillwipe{from{clip-path:inset(-10% 100% -10% 0)}to{clip-path:inset(-10% 0% -10% 0)}}
+.fill-note{margin-top:22px;font-size:.95rem;font-variation-settings:"wdth" 96,"wght" 430;opacity:.75}
+
+/* ---------- idle breathing trigger ---------- */
+.js.idle .hero-word{animation:idlebreathe 6s ease-in-out infinite}
+@keyframes idlebreathe{0%,100%{font-variation-settings:"wdth" 122,"wght" 800}50%{font-variation-settings:"wdth" 104,"wght" 620}}
+
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion:reduce){
   .js .reveal .line>span,.js .fadein{transform:none;opacity:1;transition:none}
@@ -177,6 +230,9 @@ section{position:relative}
   .js .hero-word{animation:none}
   .js .scrub-word{animation:none;font-variation-settings:"wdth" 125,"wght" 900}
   .axis-word span{transition:none}
+  .slice-panel .slice{transition:none;clip-path:inset(0 0 0 0)}
+  .fill-word .top{animation:none;clip-path:inset(-10% 0 -10% 0)}
+  .melt-word{filter:none}
 }
 </style>
 </head>
@@ -201,7 +257,7 @@ section{position:relative}
       <span class="line"><span>Motion</span></span>
       <span class="line"><span class="ln2">Lab</span></span>
     </h1>
-    <p class="hero-sub fadein">A living study of web motion. <strong>Everything on this page is the demo:</strong> variable font axes, generative morphs, particle flow fields, scroll scrubbing, spring physics, gooey filters and text decoders, each built by hand.</p>
+    <p class="hero-sub fadein">A living study of web motion. <strong>Everything on this page is the demo:</strong> variable axes, morphs, flow fields, scroll reels, springs, goo, liquid type, sliced reveals, image trails, a cursor gallery, 3D tilt, ink fill and decoders, each built by hand.</p>
     <p class="hero-cue fadein">Scroll through the studies</p>
   </header>
 
@@ -309,6 +365,79 @@ section{position:relative}
     </div>
   </section>
 
+
+  <section class="field field--paper" id="melt">
+    <div class="sec-head reveal">
+      <h2 data-skew>Liquid type</h2>
+      <p>A noise field pushing every glyph's pixels. <b>Hover the word to raise the tide;</b> underneath, the turbulence never stops breathing. The text stays selectable the whole time.</p>
+    </div>
+    <div class="melt-stage">
+      <p class="melt-word" id="meltWord">MELT</p>
+    </div>
+    <p class="melt-note">Built from two filter primitives the browser has shipped for years: turbulence generates the noise, the displacement map spends it.</p>
+  </section>
+
+  <section class="field field--poster" id="slices">
+    <div class="sec-head reveal">
+      <h2 data-skew>Sliced reveal</h2>
+      <p>One artwork, cut into columns. Each column enters on its own beat and resets when you scroll away, so the reveal replays every visit.</p>
+    </div>
+    <div class="slice-panel" id="slicePanel" aria-label="An artwork revealed in staggered columns">
+      <div class="slice"></div><div class="slice"></div><div class="slice"></div><div class="slice"></div><div class="slice"></div><div class="slice"></div><div class="slice"></div><div class="slice"></div><div class="slice"></div><div class="slice"></div>
+    </div>
+    <p class="slice-note">Clip-path plus a stagger. No images, no libraries: the artwork is one gradient shared across ten windows.</p>
+  </section>
+
+  <section class="field field--ink" id="trail">
+    <div class="sec-head reveal">
+      <h2 data-skew>Image trail</h2>
+      <p>The award-site hero effect, rebuilt. <b>Move your pointer through the panel</b> and tiles spawn along your path, pop in, then burn off. Fast swipes leave denser trails.</p>
+    </div>
+    <div class="trail-panel" id="trailPanel">
+      <p class="trail-hint">Sweep through here</p>
+    </div>
+  </section>
+
+  <section class="field field--cobalt" id="gallery">
+    <div class="sec-head reveal">
+      <h2 data-skew>Cursor gallery</h2>
+      <p>A list that carries its own preview. <b>Glide down the rows:</b> the panel chases your pointer with lag and tilt, swapping its gradient for each row it passes.</p>
+    </div>
+    <div class="gal" id="gal">
+      <div class="gal-row" data-grad="linear-gradient(150deg,#f5c400,#1c39bb)">Ember <small>warm starts, long burns</small></div>
+      <div class="gal-row" data-grad="linear-gradient(150deg,#1c39bb,#17150e)">Tide <small>deep water, slow pull</small></div>
+      <div class="gal-row" data-grad="linear-gradient(150deg,#fcfbf6,#1c39bb)">Orbit <small>circles that never close</small></div>
+      <div class="gal-row" data-grad="linear-gradient(150deg,#17150e,#f5c400)">Fog <small>soft edges, hard light</small></div>
+    </div>
+    <div class="gal-peek" id="galPeek" aria-hidden="true"></div>
+  </section>
+
+  <section class="field field--paper" id="tilt">
+    <div class="sec-head reveal">
+      <h2 data-skew>Depth tilt</h2>
+      <p>One card, three planes. <b>Move around the card</b> and each layer drifts at its own depth while a glare tracks your pointer across the surface.</p>
+    </div>
+    <div class="tilt-stage" id="tiltStage">
+      <div class="tilt-card" id="tiltCard">
+        <h3 class="layer tilt-title">Hold<br>steady</h3>
+        <p class="layer tilt-body">The headline floats closest to you, the body sits mid-air, the badge hovers above everything. All of it is CSS perspective, no WebGL.</p>
+        <div class="layer tilt-badge" aria-hidden="true"></div>
+        <div class="tilt-glare" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="field field--poster" id="fill">
+    <div class="sec-head reveal">
+      <h2 data-skew>Ink fill</h2>
+      <p>An outlined word that drinks its color as it crosses the viewport, poured by the scroll itself. Scroll back up and it empties again.</p>
+    </div>
+    <div class="fill-stage">
+      <p class="fill-word" id="fillWord"><span class="base">SCROLL</span><span class="top" aria-hidden="true">SCROLL</span></p>
+    </div>
+    <p class="fill-note">A clip-path wipe riding the view timeline. Zero JavaScript in browsers that support scroll-driven CSS.</p>
+  </section>
+
   <section class="field field--ink" id="decode">
     <div class="sec-head reveal">
       <h2 data-skew>Decoder</h2>
@@ -320,18 +449,34 @@ section{position:relative}
       <li><a href="#flow" data-scramble>Flow field <small>seven hundred riders</small></a></li>
       <li><a href="#spring" data-scramble>Spring physics <small>damped integration</small></a></li>
       <li><a href="#goo" data-scramble>Gooey merge <small>blur plus contrast</small></a></li>
+          <li><a href="#melt" data-scramble>Liquid type <small>turbulence displacement</small></a></li>
+      <li><a href="#slices" data-scramble>Sliced reveal <small>column stagger</small></a></li>
+      <li><a href="#trail" data-scramble>Image trail <small>spawn and burn</small></a></li>
+      <li><a href="#gallery" data-scramble>Cursor gallery <small>peek follows pointer</small></a></li>
+      <li><a href="#tilt" data-scramble>Depth tilt <small>layered perspective</small></a></li>
+      <li><a href="#fill" data-scramble>Ink fill <small>clip driven by scroll</small></a></li>
     </ul>
   </section>
 
   <footer class="footer field--paper">
     <p class="big">Every effect here is the demo.</p>
     <div class="meta">
-      <span>Motion Lab, study 001, hand-written CSS, SVG and canvas</span>
+      <span>Motion Lab, study 001 rev 2, hand-written CSS, SVG filters and canvas</span>
       <span>stewiefeh studios</span>
     </div>
   </footer>
 </main>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="meltFilter" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.028" numOctaves="2" seed="7" result="noise">
+        <animate attributeName="baseFrequency" dur="16s" values="0.012 0.028;0.02 0.05;0.012 0.028" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feDisplacementMap id="meltDisp" in="SourceGraphic" in2="noise" scale="26" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
 <script>
 (function(){
   "use strict";
@@ -652,6 +797,167 @@ section{position:relative}
       gooOn = vis;
       if (vis && !goo._running){ goo._running = true; requestAnimationFrame(gooStep); }
     });
+  }
+
+
+  /* ---- liquid type ---- */
+  var meltWord = document.getElementById("meltWord");
+  var meltDisp = document.getElementById("meltDisp");
+  if (meltDisp){
+    var meltAnimEl = document.querySelector("#meltFilter animate");
+    if (RM && meltAnimEl){ meltAnimEl.parentNode.removeChild(meltAnimEl); }
+    if (!RM && meltWord){
+      meltWord.addEventListener("pointerenter", function(){ meltDisp.setAttribute("scale", "150"); });
+      meltWord.addEventListener("pointerleave", function(){ meltDisp.setAttribute("scale", "26"); });
+    }
+  }
+
+  /* ---- sliced reveal ---- */
+  var slicePanel = document.getElementById("slicePanel");
+  if (slicePanel){
+    var slices = [].slice.call(slicePanel.children);
+    var sn = slices.length;
+    slices.forEach(function(s, i){
+      s.style.transitionDelay = (i*70) + "ms";
+      s.style.background = "linear-gradient(180deg,#f5c400 0%,#f3f0e6 34%,#1c39bb 62%,#17150e 100%)";
+      s.style.backgroundSize = (sn*100) + "% 100%";
+      s.style.backgroundPosition = (i/(sn-1)*100).toFixed(2) + "% 0";
+    });
+    var sliceIO = new IntersectionObserver(function(es){
+      es.forEach(function(en){ slicePanel.classList.toggle("in", en.isIntersecting); });
+    }, {threshold: 0.25});
+    sliceIO.observe(slicePanel);
+  }
+
+  /* ---- image trail ---- */
+  var trailPanel = document.getElementById("trailPanel");
+  if (trailPanel && !RM){
+    var tGrads = [
+      "linear-gradient(160deg,#f5c400,#1c39bb)",
+      "linear-gradient(160deg,#1c39bb,#17150e)",
+      "linear-gradient(160deg,#fcfbf6,#1c39bb)",
+      "linear-gradient(160deg,#17150e,#f5c400)"
+    ];
+    var lastSX = -999, lastSY = -999;
+    trailPanel.addEventListener("pointermove", function(e){
+      if (e.pointerType === "touch") return;
+      var r = trailPanel.getBoundingClientRect();
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      var dx = x - lastSX, dy = y - lastSY;
+      if (dx*dx + dy*dy < 4900) return;
+      lastSX = x; lastSY = y;
+      var t = document.createElement("div");
+      t.className = "trail-tile";
+      var size = 90 + Math.random()*60;
+      t.style.width = size + "px";
+      t.style.height = Math.round(size*1.25) + "px";
+      t.style.left = x + "px";
+      t.style.top = y + "px";
+      t.style.background = tGrads[Math.floor(Math.random()*tGrads.length)];
+      var r1 = (Math.random()*40 - 20).toFixed(1), r2 = (Math.random()*30 - 15).toFixed(1), r3 = (Math.random()*30 - 15).toFixed(1);
+      t.style.transform = "translate(-50%,-50%) rotate(" + r1 + "deg) scale(.35)";
+      trailPanel.appendChild(t);
+      getComputedStyle(t).opacity;
+      t.style.transition = "transform .3s cubic-bezier(.22,1,.36,1), opacity .55s ease .25s";
+      t.style.opacity = "1";
+      t.style.transform = "translate(-50%,-50%) rotate(" + r2 + "deg) scale(1)";
+      setTimeout(function(){
+        t.style.opacity = "0";
+        t.style.transform = "translate(-50%,-64%) rotate(" + r3 + "deg) scale(1)";
+      }, 300);
+      setTimeout(function(){ if (t.parentNode) t.parentNode.removeChild(t); }, 1150);
+      var tiles = trailPanel.querySelectorAll(".trail-tile");
+      while (tiles.length > 14){ trailPanel.removeChild(tiles[0]); tiles = trailPanel.querySelectorAll(".trail-tile"); }
+    });
+  }
+
+  /* ---- cursor gallery ---- */
+  var gal = document.getElementById("gal");
+  var peek = document.getElementById("galPeek");
+  if (gal && peek && !RM){
+    var pOn = false, peekRunning = false, px = 0, py = 0, tx = 0, ty = 0, pvx = 0;
+    function peekStep(){
+      if (!pOn){ peekRunning = false; return; }
+      var ddx = tx - px, ddy = ty - py;
+      pvx = pvx*0.8 + ddx*0.2;
+      px += ddx*0.16; py += ddy*0.16;
+      var prot = clamp(pvx*0.06, -10, 10);
+      peek.style.transform = "translate3d(" + px.toFixed(1) + "px," + py.toFixed(1) + "px,0) translate(-50%,-58%) rotate(" + prot.toFixed(2) + "deg)";
+      requestAnimationFrame(peekStep);
+    }
+    gal.addEventListener("pointerenter", function(e){
+      pOn = true; peek.classList.add("on");
+      px = tx = e.clientX; py = ty = e.clientY;
+      if (!peekRunning){ peekRunning = true; requestAnimationFrame(peekStep); }
+    });
+    gal.addEventListener("pointermove", function(e){ tx = e.clientX; ty = e.clientY; });
+    gal.addEventListener("pointerleave", function(){ pOn = false; peek.classList.remove("on"); });
+    [].slice.call(gal.querySelectorAll(".gal-row")).forEach(function(row){
+      row.addEventListener("pointerenter", function(){
+        peek.style.background = row.getAttribute("data-grad");
+      });
+    });
+  }
+
+  /* ---- depth tilt ---- */
+  var tiltStage = document.getElementById("tiltStage");
+  var tiltCard = document.getElementById("tiltCard");
+  if (tiltStage && tiltCard){
+    if (RM){ tiltCard.style.transform = "none"; }
+    else {
+      var tOn = false, tiltRunning = false, trx = 0, tryy = 0, crx = 0, cry = 0;
+      function tiltStep(){
+        if (!tOn){ tiltRunning = false; tiltCard.style.transform = "rotateX(0deg) rotateY(0deg)"; return; }
+        crx += (trx - crx)*0.12; cry += (tryy - cry)*0.12;
+        tiltCard.style.transform = "rotateX(" + crx.toFixed(2) + "deg) rotateY(" + cry.toFixed(2) + "deg)";
+        requestAnimationFrame(tiltStep);
+      }
+      tiltStage.addEventListener("pointermove", function(e){
+        var r = tiltCard.getBoundingClientRect();
+        var dx = (e.clientX - (r.left + r.width/2)) / (r.width/2);
+        var dy = (e.clientY - (r.top + r.height/2)) / (r.height/2);
+        tryy = clamp(dx, -1.4, 1.4) * 15;
+        trx = clamp(dy, -1.4, 1.4) * -11;
+        tiltCard.style.setProperty("--gx", (((dx+1.4)/2.8)*100).toFixed(1) + "%");
+        tiltCard.style.setProperty("--gy", (((dy+1.4)/2.8)*100).toFixed(1) + "%");
+        tOn = true;
+        if (!tiltRunning){ tiltRunning = true; requestAnimationFrame(tiltStep); }
+      });
+      tiltStage.addEventListener("pointerleave", function(){ trx = 0; tryy = 0; setTimeout(function(){ tOn = false; }, 600); });
+    }
+  }
+
+  /* ---- ink fill fallback ---- */
+  var fillWord = document.getElementById("fillWord");
+  if (fillWord && !CSS.supports("animation-timeline: view()") && !RM){
+    var fillEl = fillWord.querySelector(".top");
+    var fTick = false;
+    function fillUpdate(){
+      fTick = false;
+      var r = fillWord.getBoundingClientRect();
+      var p = clamp((window.innerHeight*0.85 - r.top) / (window.innerHeight*0.9), 0, 1);
+      fillEl.style.clipPath = "inset(-10% " + ((1-p)*100).toFixed(2) + "% -10% 0)";
+    }
+    window.addEventListener("scroll", function(){
+      if (!fTick){ fTick = true; requestAnimationFrame(fillUpdate); }
+    }, {passive:true});
+    fillUpdate();
+  }
+
+  /* ---- stillness trigger: the page breathes when you stop ---- */
+  if (!RM){
+    var idleTimer = null;
+    var idleReset = function(){
+      document.documentElement.classList.remove("idle");
+      if (idleTimer) clearTimeout(idleTimer);
+      idleTimer = setTimeout(function(){
+        document.documentElement.classList.add("idle");
+      }, 6000);
+    };
+    ["pointermove","pointerdown","scroll","keydown","touchstart"].forEach(function(evt){
+      window.addEventListener(evt, idleReset, {passive:true});
+    });
+    idleReset();
   }
 
   /* ---- text decoder ---- */
