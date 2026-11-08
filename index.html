@@ -276,6 +276,28 @@ section{position:relative}
   .melt-word{filter:none}
   .meta-word .char{transform:none}
 }
+
+/* rev 4: constellation, flick rail, line draw, burst */
+.const-panel{position:relative;height:min(70vh,620px);border-radius:18px;overflow:hidden;background:#17150e}
+.const-word{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:clamp(64px,15vw,200px);line-height:1;letter-spacing:-0.04em;color:transparent;-webkit-text-stroke:2px rgba(252,251,246,.92);pointer-events:none}
+.rail{overflow:hidden;border-radius:18px;touch-action:pan-y;cursor:grab;padding:4px 0}
+.rail:active{cursor:grabbing}
+.rail-track{display:flex;gap:16px;width:max-content;padding:6px 2px}
+.flick-card{width:250px;height:400px;border-radius:16px;display:flex;flex-direction:column;justify-content:space-between;padding:22px;flex:none}
+.flick-card .num{font-size:13px;letter-spacing:.08em;opacity:.55}
+.flick-card h3{font-family:var(--display);font-weight:900;font-size:30px;line-height:1.02;letter-spacing:-0.02em}
+.flick-card small{font-size:13px;opacity:.65;margin-top:6px}
+.flick-card--ink{background:var(--ink);color:var(--paper)}
+.flick-card--paper{background:var(--white);color:var(--ink)}
+.flick-card--poster{background:var(--poster);color:var(--ink)}
+.flick-card--cobalt{background:var(--cobalt);color:var(--white)}
+.draw-stage{display:flex;justify-content:center;padding:26px 0}
+.draw{width:min(500px,86vw);height:auto}
+.draw path{fill:none;stroke:var(--ink);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.draw path.dot{stroke:var(--cobalt)}
+.burst-panel{position:relative;height:min(60vh,520px);border-radius:18px;overflow:hidden;background:var(--poster);cursor:crosshair}
+.burst-panel .shader-hint{color:var(--ink)}
+@media(max-width:700px){.flick-card{width:200px;height:330px}}
 </style>
 </head>
 <body>
@@ -299,7 +321,7 @@ section{position:relative}
       <span class="line"><span>Motion</span></span>
       <span class="line"><span class="ln2">Lab</span></span>
     </h1>
-    <p class="hero-sub fadein">A living study of web motion. <strong>Everything on this page is the demo:</strong> now powered by real libraries: a rigid-body physics pit, a live GLSL shader field, a FLIP-shuffled deck and a pinned type argument, beside the hand-built originals.</p>
+    <p class="hero-sub fadein">A living study of web motion. <strong>Everything on this page is the demo:</strong> now powered by real libraries: a rigid-body physics pit, a live GLSL shader field, a FLIP-shuffled deck, an inertial flick rail, a constellation sky and a pinned type argument, beside the hand-built originals.</p>
     <p class="hero-cue fadein">Scroll through the studies</p>
   </header>
 
@@ -414,6 +436,79 @@ section{position:relative}
     <div class="pit-controls">
       <button class="pill" id="shakeBtn" type="button">Shake the box</button>
       <button class="pill" id="dropBtn" type="button">Drop more</button>
+    </div>
+  </section>
+
+
+  <section class="field field--ink" id="constellation">
+    <div class="sec-head reveal">
+      <h2 data-skew>Constellation</h2>
+      <p>A wireframe sky that answers the pointer. <b>Move around the panel:</b> the camera drifts and the network swings with you.</p>
+    </div>
+    <div class="const-panel" id="constPanel">
+      <span class="const-word" aria-hidden="true">SIGNAL</span>
+      <p class="shader-hint">A living field</p>
+    </div>
+  </section>
+
+  <section class="field field--paper" id="flick">
+    <div class="sec-head reveal">
+      <h2 data-skew>Flick</h2>
+      <p>Momentum you can throw. <b>Grab the rail and flick it:</b> the strip coasts with real inertia and catches on the edge.</p>
+    </div>
+    <div class="rail" id="railPanel">
+      <div class="rail-track" id="railTrack">
+        <article class="flick-card flick-card--ink"><span class="num">01</span><div><h3>Variable</h3><small>weight follows the pointer</small></div></article>
+        <article class="flick-card flick-card--paper"><span class="num">02</span><div><h3>Particles</h3><small>seven hundred riders</small></div></article>
+        <article class="flick-card flick-card--poster"><span class="num">03</span><div><h3>Turbulence</h3><small>liquid displacement</small></div></article>
+        <article class="flick-card flick-card--cobalt"><span class="num">04</span><div><h3>Springs</h3><small>damped integration</small></div></article>
+        <article class="flick-card flick-card--ink"><span class="num">05</span><div><h3>Collisions</h3><small>rigid bodies at rest</small></div></article>
+        <article class="flick-card flick-card--paper"><span class="num">06</span><div><h3>Shaders</h3><small>fractal noise per pixel</small></div></article>
+        <article class="flick-card flick-card--poster"><span class="num">07</span><div><h3>Inertia</h3><small>this rail, right here</small></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="field field--paper" id="draw">
+    <div class="sec-head reveal">
+      <h2 data-skew>Line draw</h2>
+      <p>A glyph that inks itself. <b>Scroll into the panel</b> and every stroke draws on its own beat; press redraw to replay it.</p>
+    </div>
+    <div class="draw-stage" id="drawStage">
+      <svg class="draw" viewBox="0 0 400 400" aria-hidden="true">
+        <path d="M 200 50 A 150 150 0 1 1 200 350 A 150 150 0 1 1 200 50"/>
+        <path d="M 200 90 A 110 110 0 1 1 200 310 A 110 110 0 1 1 200 90"/>
+        <path d="M 30 200 A 170 60 0 1 0 370 200 A 170 60 0 1 0 30 200"/>
+        <path d="M 200 30 A 60 170 0 1 0 200 370 A 60 170 0 1 0 200 30"/>
+        <path d="M 200 90 L 310 200 L 200 310 L 90 200 Z"/>
+        <path d="M 60 60 L 340 340"/>
+        <path d="M 340 60 L 60 340"/>
+        <path d="M 295 200 L 385 200"/>
+        <path d="M 267 267 L 331 331"/>
+        <path d="M 200 295 L 200 385"/>
+        <path d="M 133 267 L 69 331"/>
+        <path d="M 105 200 L 15 200"/>
+        <path d="M 133 133 L 69 69"/>
+        <path d="M 200 105 L 200 15"/>
+        <path d="M 267 133 L 331 69"/>
+        <path class="dot" d="M 188 50 A 12 12 0 1 1 212 50 A 12 12 0 1 1 188 50"/>
+        <path class="dot" d="M 338 200 A 12 12 0 1 1 362 200 A 12 12 0 1 1 338 200"/>
+        <path class="dot" d="M 188 350 A 12 12 0 1 1 212 350 A 12 12 0 1 1 188 350"/>
+        <path class="dot" d="M 38 200 A 12 12 0 1 1 62 200 A 12 12 0 1 1 38 200"/>
+      </svg>
+    </div>
+    <div class="pit-controls">
+      <button class="pill" id="drawBtn" type="button">Redraw</button>
+    </div>
+  </section>
+
+  <section class="field field--ink" id="burst">
+    <div class="sec-head reveal">
+      <h2 data-skew>Burst</h2>
+      <p>Confetti with a physics soul. <b>Click anywhere in the panel:</b> particle fans detonate under your pointer and rain out.</p>
+    </div>
+    <div class="burst-panel" id="burstPanel">
+      <p class="shader-hint">Click anywhere</p>
     </div>
   </section>
 
@@ -554,13 +649,17 @@ section{position:relative}
       <li><a href="#shader" data-scramble>Shader field <small>GLSL on the GPU</small></a></li>
       <li><a href="#shuffle" data-scramble>Shuffle <small>FLIP transitions</small></a></li>
       <li><a href="#physics" data-scramble>Physics pit <small>rigid bodies</small></a></li>
+      <li><a href="#constellation" data-scramble>Constellation <small>network sky</small></a></li>
+      <li><a href="#flick" data-scramble>Flick <small>draggable inertia</small></a></li>
+      <li><a href="#draw" data-scramble>Line draw <small>stroke choreography</small></a></li>
+      <li><a href="#burst" data-scramble>Burst <small>particle fans</small></a></li>
     </ul>
   </section>
 
   <footer class="footer field--paper">
     <p class="big">Every effect here is the demo.</p>
     <div class="meta">
-      <span>Motion Lab, study 001 rev 3, hand-written CSS, SVG filters, canvas, GLSL, GSAP, Lenis, Matter.js and SplitType</span>
+      <span>Motion Lab, study 001 rev 4, hand-written CSS, SVG filters, canvas, GLSL, GSAP + Flip + Draggable + InertiaPlugin, Lenis, Matter.js, SplitType, Three.js, Vanta, Mo.js and anime.js</span>
       <span>stewiefeh studios</span>
     </div>
   </footer>
@@ -1344,6 +1443,184 @@ section{position:relative}
       es.forEach(function(en){ if (en.isIntersecting){ obs.disconnect(); startShader(); } });
     }, { rootMargin: "300px" }).observe(shaderPanel);
   }
+
+  /* ---------- rev 4: Vanta, Draggable + InertiaPlugin, anime.js, Mo.js ---------- */
+  var loadScript = function(src){
+    return new Promise(function(res, rej){
+      var s = document.createElement("script");
+      s.src = src; s.async = true;
+      s.onload = res;
+      s.onerror = function(){ rej(new Error("script failed: " + src)); };
+      document.head.appendChild(s);
+    });
+  };
+  var URL_THREE134 = "https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js";
+  var URL_VANTA = "https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.net.min.js";
+  var URL_DRAG = "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Draggable.min.js";
+  var URL_INERTIA = "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/InertiaPlugin.min.js";
+  var URL_MO = "https://cdn.jsdelivr.net/npm/@mojs/core@1.2.0/dist/mo.umd.js";
+
+  /* constellation (Vanta NET over three r134) */
+  var constPanel = document.getElementById("constPanel");
+  var vantaFx = null, vantaLoading = false;
+  function ensureVanta(){
+    if (vantaFx || vantaLoading || !constPanel) return;
+    vantaLoading = true;
+    var start = function(){
+      vantaLoading = false;
+      if (!window.VANTA || !window.VANTA.NET) return;
+      try {
+        vantaFx = window.VANTA.NET({
+          el: constPanel, THREE: window.THREE,
+          mouseControls: true, touchControls: true, gyroControls: false,
+          minHeight: 200, minWidth: 200,
+          scale: 1, scaleMobile: 1,
+          backgroundColor: 0x17150e, color: 0xf5c400,
+          points: 14, maxDistance: 22, spacing: 18
+        });
+      } catch(e){ vantaFx = null; }
+    };
+    if (window.THREE && window.VANTA) start();
+    else loadScript(URL_THREE134).then(function(){ return loadScript(URL_VANTA); }).then(start).catch(function(){ vantaLoading = false; });
+  }
+  function dropVanta(){
+    if (vantaFx){ try { vantaFx.destroy(); } catch(e){} vantaFx = null; }
+    vantaLoading = false;
+  }
+  if (!RM && constPanel){
+    new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) ensureVanta(); else dropVanta();
+      });
+    }, { rootMargin: "260px" }).observe(constPanel);
+  }
+
+  /* flick rail (GSAP Draggable + InertiaPlugin) */
+  var railPanel = document.getElementById("railPanel");
+  var railTrack = document.getElementById("railTrack");
+  function buildFlick(){
+    if (!railPanel || !railTrack || railTrack._dg) return;
+    if (typeof Draggable === "undefined" || typeof InertiaPlugin === "undefined") return;
+    railTrack._dg = true;
+    gsap.registerPlugin(Draggable, InertiaPlugin);
+    var measure = function(){
+      var minX = Math.min(0, railPanel.clientWidth - railTrack.scrollWidth - 8);
+      return { minX: minX, maxX: 0 };
+    };
+    Draggable.create(railTrack, {
+      type: "x", inertia: true,
+      bounds: measure(),
+      edgeResistance: 0.82,
+      cursor: "grab", activeCursor: "grabbing"
+    });
+    window.addEventListener("resize", function(){
+      var d = Draggable.get(railTrack);
+      if (d) d.applyBounds(measure());
+    });
+  }
+  if (!RM && railPanel && has("gsap")){
+    new IntersectionObserver(function(entries){
+      if (entries[0].isIntersecting && !railTrack._dg){
+        Promise.all([loadScript(URL_DRAG), loadScript(URL_INERTIA)])
+          .then(function(){ setTimeout(buildFlick, 40); })
+          .catch(function(){});
+      }
+    }, { rootMargin: "300px" }).observe(railPanel);
+  }
+
+  /* line draw (anime.js v4, stroke choreography) */
+  var drawStage = document.getElementById("drawStage");
+  var drawSvg = drawStage ? drawStage.querySelector("svg.draw") : null;
+  function runDraw(){
+    if (!drawSvg) return;
+    var paths = [].slice.call(drawSvg.querySelectorAll("path"));
+    paths.forEach(function(p){
+      if (p.getTotalLength){ p._len = p.getTotalLength(); p.style.strokeDasharray = p._len; p.style.strokeDashoffset = p._len; }
+    });
+    if (drawStage._animate && drawStage._stagger){
+      drawStage._animate(paths, { strokeDashoffset: 0, duration: 1500, delay: drawStage._stagger(70), ease: "out(4)" });
+    } else {
+      paths.forEach(function(p){ p.style.strokeDashoffset = 0; });
+    }
+  }
+  function loadAnime(){
+    if (drawStage._animeLoading || drawStage._animate) return;
+    drawStage._animeLoading = true;
+    import("https://cdn.jsdelivr.net/npm/animejs@4.2.2/+esm").then(function(m){
+      drawStage._animate = m.animate; drawStage._stagger = m.stagger;
+      drawStage._animeLoading = false;
+      if (drawStage._pending){ drawStage._pending = false; runDraw(); }
+    }).catch(function(){
+      drawStage._animate = null; drawStage._animeLoading = false;
+      if (drawStage._pending){ drawStage._pending = false; runDraw(); }
+    });
+  }
+  if (drawStage && drawSvg){
+    new IntersectionObserver(function(entries, io){
+      if (entries[0].isIntersecting){
+        io.disconnect();
+        if (!RM){
+          if (drawStage._animate) runDraw();
+          else { drawStage._pending = true; loadAnime(); }
+        }
+      }
+    }, { rootMargin: "260px" }).observe(drawStage);
+    var drawBtn = document.getElementById("drawBtn");
+    if (drawBtn) drawBtn.addEventListener("click", function(){
+      if (RM) return;
+      if (drawStage._animate) runDraw(); else { drawStage._pending = true; loadAnime(); }
+    });
+  }
+
+  /* burst (Mo.js particle fans) */
+  var burstPanel = document.getElementById("burstPanel");
+  var bursts = null, burstReady = false;
+  function buildBurst(){
+    if (burstReady || !window.mo || !window.mo.Burst || !burstPanel) return;
+    burstReady = true;
+    bursts = [
+      new window.mo.Burst({
+        parent: burstPanel,
+        radius: { 8: 115 }, count: 14,
+        children: {
+          shape: "circle",
+          fill: ["#f5c400", "#1c39bb", "#fcfbf6", "#17150e"],
+          scale: { 1: 0.2 }, speed: 0.9, duration: 1200
+        }
+      }),
+      new window.mo.Burst({
+        parent: burstPanel,
+        radius: { 4: 70 }, count: 1,
+        children: {
+          shape: "circle", fill: "none", stroke: "#17150e",
+          strokeWidth: { 8: 0 }, scale: { 1: 0.75 }, duration: 900
+        }
+      })
+    ];
+  }
+  function replayBurst(x, y){
+    if (!bursts) return;
+    bursts.forEach(function(b){ b.tune({ x: x, y: y }).replay(); });
+  }
+  if (burstPanel){
+    burstPanel.addEventListener("click", function(e){
+      if (!burstReady) return;
+      var r = burstPanel.getBoundingClientRect();
+      replayBurst(e.clientX - r.left - r.width/2, e.clientY - r.top - r.height/2);
+    });
+    if (!RM){
+      new IntersectionObserver(function(entries, io){
+        if (entries[0].isIntersecting){
+          io.disconnect();
+          loadScript(URL_MO).then(function(){
+            buildBurst();
+            if (bursts) setTimeout(function(){ replayBurst(0, 0); }, 500);
+          }).catch(function(){});
+        }
+      }, { rootMargin: "300px" }).observe(burstPanel);
+    }
+  }
+
 })();
 </script>
 </body>
