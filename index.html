@@ -10,6 +10,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add('js');</script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3/dist/Flip.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/split-type@0.3/umd/index.min.js"></script>
 <style>
 :root{
   --ink:#17150e;
@@ -223,6 +229,41 @@ section{position:relative}
 .js.idle .hero-word{animation:idlebreathe 6s ease-in-out infinite}
 @keyframes idlebreathe{0%,100%{font-variation-settings:"wdth" 122,"wght" 800}50%{font-variation-settings:"wdth" 104,"wght" 620}}
 
+
+/* ---------- 14 metamorph (GSAP pin + SplitType) ---------- */
+.meta-section{height:320vh;background:var(--cobalt)}
+.meta-pin{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;justify-content:center;padding:0 5vw;color:var(--white)}
+.meta-kicker{font-size:.95rem;font-variation-settings:"wdth" 96,"wght" 430;opacity:.75;margin-bottom:24px}
+.meta-stage{position:relative;height:36vh}
+.meta-word{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(2.8rem,11.5vw,10rem);text-transform:uppercase;color:var(--white);font-variation-settings:"wdth" 118,"wght" 780;overflow:hidden;letter-spacing:-.01em;opacity:0}
+.meta-word:first-child{opacity:1}
+.meta-word .char{display:inline-block;will-change:transform}
+
+/* ---------- 15 shader field ---------- */
+.shader-panel{position:relative;height:min(66vh,600px);border-radius:18px;overflow:hidden;background:radial-gradient(130% 130% at 22% 28%, var(--cobalt) 0%, var(--ink) 58%)}
+.shader-panel canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.shader-hint{position:absolute;left:22px;bottom:18px;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;opacity:.5;color:var(--paper);pointer-events:none}
+
+/* ---------- 16 shuffle deck (GSAP Flip) ---------- */
+.deck{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:900px}
+@media(max-width:700px){.deck{grid-template-columns:repeat(2,1fr)}}
+.deck-card{aspect-ratio:4/3;border-radius:16px;display:flex;align-items:flex-end;padding:18px;font-variation-settings:"wdth" 114,"wght" 720;text-transform:uppercase;font-size:clamp(1.1rem,2.4vw,1.6rem);will-change:transform}
+.dc-ink{background:var(--ink);color:var(--paper)}
+.dc-cobalt{background:var(--cobalt);color:var(--white)}
+.dc-paper{background:var(--paper);color:var(--ink);box-shadow:inset 0 0 0 2px rgba(23,21,14,.18)}
+.dc-white{background:var(--white);color:var(--ink)}
+.dc-poster{background:var(--poster);color:var(--ink)}
+.dc-ink2{background:var(--ink);color:var(--poster)}
+.pill{margin-top:26px;padding:14px 26px;border-radius:999px;border:2px solid var(--ink);background:transparent;color:var(--ink);font-family:inherit;font-size:.95rem;font-variation-settings:"wdth" 104,"wght" 640;cursor:pointer;transition:background .25s ease,color .25s ease}
+.pill:hover{background:var(--ink);color:var(--poster)}
+.pill:active{transform:scale(.97)}
+
+/* ---------- 17 physics pit (Matter.js) ---------- */
+.pit{position:relative;height:min(62vh,560px);border-radius:18px;overflow:hidden;background:var(--white)}
+.pit canvas{display:block}
+.pit-controls{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap}
+.pit-controls .pill{margin-top:0}
+
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion:reduce){
   .js .reveal .line>span,.js .fadein{transform:none;opacity:1;transition:none}
@@ -233,6 +274,7 @@ section{position:relative}
   .slice-panel .slice{transition:none;clip-path:inset(0 0 0 0)}
   .fill-word .top{animation:none;clip-path:inset(-10% 0 -10% 0)}
   .melt-word{filter:none}
+  .meta-word .char{transform:none}
 }
 </style>
 </head>
@@ -257,7 +299,7 @@ section{position:relative}
       <span class="line"><span>Motion</span></span>
       <span class="line"><span class="ln2">Lab</span></span>
     </h1>
-    <p class="hero-sub fadein">A living study of web motion. <strong>Everything on this page is the demo:</strong> variable axes, morphs, flow fields, scroll reels, springs, goo, liquid type, sliced reveals, image trails, a cursor gallery, 3D tilt, ink fill and decoders, each built by hand.</p>
+    <p class="hero-sub fadein">A living study of web motion. <strong>Everything on this page is the demo:</strong> now powered by real libraries: a rigid-body physics pit, a live GLSL shader field, a FLIP-shuffled deck and a pinned type argument, beside the hand-built originals.</p>
     <p class="hero-cue fadein">Scroll through the studies</p>
   </header>
 
@@ -271,6 +313,18 @@ section{position:relative}
     </div>
     <div class="scrub-stage">
       <p class="scrub-word" id="scrubWord">FLUID</p>
+    </div>
+  </section>
+
+
+  <section class="meta-section" id="metamorph" aria-label="Pinned scroll-driven type argument">
+    <div class="meta-pin">
+      <p class="meta-kicker">Scroll slowly. The argument rearranges itself, letter by letter.</p>
+      <div class="meta-stage" id="metaStage">
+        <p class="meta-word">CHAOS</p>
+        <p class="meta-word">INTENT</p>
+        <p class="meta-word">CONTROL</p>
+      </div>
     </div>
   </section>
 
@@ -297,6 +351,17 @@ section{position:relative}
     <div class="flow-panel">
       <canvas id="flowCanvas" aria-label="Interactive particle flow field"></canvas>
       <p class="flow-hint">Move through the field</p>
+    </div>
+  </section>
+
+
+  <section class="field field--ink" id="shader">
+    <div class="sec-head reveal">
+      <h2 data-skew>Shader field</h2>
+      <p>A fragment shader painting every pixel from fractal noise, live on the GPU. <b>Move inside the panel</b> to bend the current; keep scrolling and the field floods with yellow.</p>
+    </div>
+    <div class="shader-panel" id="shaderPanel">
+      <p class="shader-hint">Stir the field</p>
     </div>
   </section>
 
@@ -337,6 +402,19 @@ section{position:relative}
       <div class="spring-badge" id="springBadge" role="button" tabindex="0" aria-label="Draggable disc, release to spring back">Pull me</div>
     </div>
     <p class="spring-note">Throw hard and it overshoots; set it down gently and it barely moves. That asymmetry is what separates physics from tweening.</p>
+  </section>
+
+
+  <section class="field field--paper" id="physics">
+    <div class="sec-head reveal">
+      <h2 data-skew>Physics pit</h2>
+      <p>A real rigid-body engine, not a tween. <b>Grab anything and throw it;</b> collisions, gravity and restitution are all simulated, never faked.</p>
+    </div>
+    <div class="pit" id="pitPanel"></div>
+    <div class="pit-controls">
+      <button class="pill" id="shakeBtn" type="button">Shake the box</button>
+      <button class="pill" id="dropBtn" type="button">Drop more</button>
+    </div>
   </section>
 
   <section class="field field--cobalt" id="goo">
@@ -412,6 +490,23 @@ section{position:relative}
     <div class="gal-peek" id="galPeek" aria-hidden="true"></div>
   </section>
 
+
+  <section class="field field--poster" id="shuffle">
+    <div class="sec-head reveal">
+      <h2 data-skew>Shuffle</h2>
+      <p>Six cards, one gesture. <b>Press shuffle</b> and the deck reorders itself, every card flying to its new seat instead of teleporting: measure first, last, then invert and play.</p>
+    </div>
+    <div class="deck" id="deck">
+      <div class="deck-card dc-ink">Axis</div>
+      <div class="deck-card dc-cobalt">Morph</div>
+      <div class="deck-card dc-paper">Flow</div>
+      <div class="deck-card dc-white">Goo</div>
+      <div class="deck-card dc-poster">Melt</div>
+      <div class="deck-card dc-ink2">Tilt</div>
+    </div>
+    <button class="pill" id="shuffleBtn" type="button">Shuffle the deck</button>
+  </section>
+
   <section class="field field--paper" id="tilt">
     <div class="sec-head reveal">
       <h2 data-skew>Depth tilt</h2>
@@ -455,13 +550,17 @@ section{position:relative}
       <li><a href="#gallery" data-scramble>Cursor gallery <small>peek follows pointer</small></a></li>
       <li><a href="#tilt" data-scramble>Depth tilt <small>layered perspective</small></a></li>
       <li><a href="#fill" data-scramble>Ink fill <small>clip driven by scroll</small></a></li>
+          <li><a href="#metamorph" data-scramble>Metamorph <small>pinned type argument</small></a></li>
+      <li><a href="#shader" data-scramble>Shader field <small>GLSL on the GPU</small></a></li>
+      <li><a href="#shuffle" data-scramble>Shuffle <small>FLIP transitions</small></a></li>
+      <li><a href="#physics" data-scramble>Physics pit <small>rigid bodies</small></a></li>
     </ul>
   </section>
 
   <footer class="footer field--paper">
     <p class="big">Every effect here is the demo.</p>
     <div class="meta">
-      <span>Motion Lab, study 001 rev 2, hand-written CSS, SVG filters and canvas</span>
+      <span>Motion Lab, study 001 rev 3, hand-written CSS, SVG filters, canvas, GLSL, GSAP, Lenis, Matter.js and SplitType</span>
       <span>stewiefeh studios</span>
     </div>
   </footer>
@@ -984,6 +1083,265 @@ section{position:relative}
     [].slice.call(document.querySelectorAll("[data-scramble]")).forEach(function(el){
       el.addEventListener("pointerenter", function(){ decode(el); });
     });
+  }
+})();
+<script type="module">
+(function(){
+  var RM = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var clamp = function(v,a,b){return Math.max(a,Math.min(b,v));};
+  var has = function(k){ return typeof window[k] !== "undefined"; };
+
+  /* smooth scroll (Lenis) synced to GSAP */
+  if (!RM && has("Lenis") && has("gsap")){
+    document.documentElement.style.scrollBehavior = "auto";
+    var lenis = new Lenis({ lerp: 0.1 });
+    if (has("ScrollTrigger")){
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add(function(t){ lenis.raf(t*1000); });
+      gsap.ticker.lagSmoothing(0);
+    } else {
+      var raf = function(t){ lenis.raf(t); requestAnimationFrame(raf); };
+      requestAnimationFrame(raf);
+    }
+    window.__lenis = lenis;
+  }
+
+  /* nav jumps through the View Transitions API when available */
+  var navLinks = document.querySelectorAll(".top nav a");
+  navLinks.forEach(function(a){
+    a.addEventListener("click", function(e){
+      var target = document.querySelector(a.getAttribute("href"));
+      if (!target) return;
+      e.preventDefault();
+      var go = function(){
+        if (window.__lenis){ window.__lenis.scrollTo(target, { immediate: true }); }
+        else { target.scrollIntoView(); }
+      };
+      if (!RM && document.startViewTransition){ document.startViewTransition(go); }
+      else { go(); }
+    });
+  });
+
+  /* metamorph: pinned, scrubbed, character-level */
+  if (has("gsap") && has("ScrollTrigger") && has("SplitType") && !RM){
+    var stage = document.getElementById("metaStage");
+    if (stage){
+      gsap.registerPlugin(ScrollTrigger);
+      var words = stage.querySelectorAll(".meta-word");
+      words.forEach(function(w){ w.style.opacity = "1"; });
+      var splits = [].map.call(words, function(w){ return new SplitType(w, { types: "chars" }); });
+      var tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#metamorph", start: "top top", end: "+=260%",
+          scrub: 0.6, pin: true, anticipatePin: 1, invalidateOnRefresh: true
+        }
+      });
+      splits.forEach(function(sp, i){
+        var chars = sp.chars;
+        tl.fromTo(chars,
+          { yPercent: 130, rotate: function(){ return gsap.utils.random(-30, 30); } },
+          { yPercent: 0, rotate: 0, stagger: { each: 0.03 }, duration: 1, ease: "power3.out" },
+          i*2)
+         .to(chars,
+          { yPercent: -130, rotate: function(){ return gsap.utils.random(-40, 40); }, stagger: { each: 0.02, from: "end" }, duration: 1, ease: "power3.in" },
+          i*2+1);
+      });
+      tl.to({}, { duration: 0.6 });
+      if (document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ ScrollTrigger.refresh(); }); }
+    }
+  }
+
+  /* shuffle deck: GSAP Flip */
+  if (has("gsap") && has("Flip") && !RM){
+    var deck = document.getElementById("deck");
+    var sbtn = document.getElementById("shuffleBtn");
+    if (deck && sbtn){
+      gsap.registerPlugin(Flip);
+      sbtn.addEventListener("click", function(){
+        var cards = [].slice.call(deck.children);
+        var state = Flip.getState(cards);
+        cards.reverse().forEach(function(c){ deck.appendChild(c); });
+        Flip.from(state, { duration: 0.75, ease: "power2.inOut", scale: true, absolute: true, stagger: 0.04 });
+        gsap.fromTo(sbtn, { scale: 0.94 }, { scale: 1, duration: 0.4, ease: "back.out(3)" });
+      });
+    }
+  }
+
+  /* physics pit: Matter.js */
+  if (has("Matter")){
+    var pit = document.getElementById("pitPanel");
+    if (pit){
+      var M = Matter;
+      var engine = null, render = null, pitVis = false, pitSpawned = false, pitLoopOn = false;
+      var COLORS = ["#f5c400", "#1c39bb", "#fcfbf6", "#f3f0e6"];
+      function buildPit(){
+        var w = pit.clientWidth, h = pit.clientHeight;
+        engine = M.Engine.create({ enableSleeping: true });
+        render = M.Render.create({
+          element: pit, engine,
+          options: { width: w, height: h, background: "transparent", wireframes: false,
+                     pixelRatio: Math.min(window.devicePixelRatio || 1, 1.5) }
+        });
+        var wallOpt = { isStatic: true, render: { visible: false } };
+        M.Composite.add(engine.world, [
+          M.Bodies.rectangle(w/2, h+20, w+400, 40, wallOpt),
+          M.Bodies.rectangle(-20, h/2, 40, h*4, wallOpt),
+          M.Bodies.rectangle(w+20, h/2, 40, h*4, wallOpt)
+        ]);
+        var mouse = M.Mouse.create(render.canvas);
+        try {
+          mouse.element.removeEventListener("mousewheel", mouse.mousewheel);
+          mouse.element.removeEventListener("DOMMouseScroll", mouse.mousewheel);
+          mouse.element.removeEventListener("touchmove", mouse.mousemove);
+          mouse.element.removeEventListener("touchstart", mouse.mousedown);
+          mouse.element.removeEventListener("touchend", mouse.mouseup);
+        } catch (err) {}
+        var mc = M.MouseConstraint.create({ engine: engine, mouse: mouse,
+          constraint: { stiffness: 0.12, damping: 0.08, render: { visible: false } } });
+        M.Composite.add(engine.world, mc);
+      }
+      function dropBatch(n){
+        var w = pit.clientWidth, h = pit.clientHeight;
+        for (var i=0;i<n;i++){
+          var r = 12 + Math.random()*16;
+          M.Composite.add(engine.world, M.Bodies.circle(Math.random()*w, -40 - Math.random()*160, r,
+            { restitution: 0.55, friction: 0.05, density: 0.0015,
+              render: { fillStyle: COLORS[Math.floor(Math.random()*4)] } }));
+        }
+        for (var j=0;j<Math.ceil(n/4);j++){
+          var bw = 40 + Math.random()*40, bh = 24 + Math.random()*30;
+          M.Composite.add(engine.world, M.Bodies.rectangle(Math.random()*w, -60 - Math.random()*160, bw, bh,
+            { restitution: 0.4, chamfer: { radius: 8 },
+              render: { fillStyle: COLORS[Math.floor(Math.random()*4)] } }));
+        }
+      }
+      function pitStep(){
+        if (!pitLoopOn) { pit._running = false; return; }
+        var bodies = M.Composite.allBodies(engine.world);
+        var awake = bodies.some(function(b){ return !b.isStatic && !b.isSleeping; });
+        if (awake){ M.Engine.update(engine, 1000/60); M.Render.world(render); }
+        requestAnimationFrame(pitStep);
+      }
+      buildPit();
+      new IntersectionObserver(function(es){
+        es.forEach(function(en){
+          pitVis = en.isIntersecting;
+          if (en.isIntersecting && !pitSpawned && !RM){ pitSpawned = true; dropBatch(26); }
+          if (en.isIntersecting && !pit._running){ pit._running = true; pitLoopOn = true; requestAnimationFrame(pitStep); }
+        });
+      }, { threshold: 0.15 }).observe(pit);
+      document.getElementById("shakeBtn").addEventListener("click", function(){
+        M.Composite.allBodies(engine.world).forEach(function(b){
+          if (b.isStatic) return;
+          M.Sleeping.set(b, false);
+          M.Body.applyForce(b, b.position, {
+            x: (Math.random()-0.5) * b.mass * 0.05,
+            y: -b.mass * (Math.random()*0.04 + 0.015)
+          });
+        });
+      });
+      document.getElementById("dropBtn").addEventListener("click", function(){
+        pitSpawned = true; dropBatch(8);
+      });
+      var pitW = pit.clientWidth, pitTimer = null;
+      window.addEventListener("resize", function(){
+        clearTimeout(pitTimer);
+        pitTimer = setTimeout(function(){
+          if (Math.abs(pit.clientWidth - pitW) > 40){
+            pitW = pit.clientWidth;
+            M.Render.stop(render);
+            M.Composite.clear(engine.world, false);
+            M.Engine.clear(engine);
+            render.canvas.remove();
+            buildPit();
+          }
+        }, 250);
+      });
+    }
+  }
+
+  /* shader field: Three.js, lazily imported the moment it approaches */
+  var shaderPanel = document.getElementById("shaderPanel");
+  if (shaderPanel && !RM){
+    var FRAG = [
+      "precision highp float;",
+      "uniform float uTime; uniform vec2 uRes; uniform vec2 uPointer; uniform float uPointerOn; uniform float uScroll;",
+      "float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }",
+      "float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.0-2.0*f);",
+      "  return mix(mix(hash(i), hash(i+vec2(1.0,0.0)), f.x), mix(hash(i+vec2(0.0,1.0)), hash(i+vec2(1.0,1.0)), f.x), f.y); }",
+      "float fbm(vec2 p){ float v = 0.0, a = 0.5; for(int i=0;i<5;i++){ v += a*noise(p); p *= 2.03; a *= 0.5; } return v; }",
+      "void main(){",
+      "  vec2 uv = (gl_FragCoord.xy - 0.5*uRes) / uRes.y;",
+      "  float t = uTime * 0.15;",
+      "  vec2 q = vec2(fbm(uv*1.6 + t), fbm(uv*1.6 - t*0.7));",
+      "  float f = fbm(uv*2.2 + q*1.4);",
+      "  vec3 ink = vec3(0.09, 0.082, 0.055);",
+      "  vec3 cobalt = vec3(0.11, 0.224, 0.733);",
+      "  vec3 poster = vec3(0.96, 0.769, 0.0);",
+      "  vec3 col = mix(ink, cobalt, smoothstep(0.25, 0.75, f));",
+      "  col = mix(col, poster, smoothstep(0.72, 0.95, f) * (0.3 + 0.7*uScroll));",
+      "  float d = length(uv - uPointer);",
+      "  col += poster * smoothstep(0.30, 0.0, d) * 0.55 * uPointerOn;",
+      "  col += cobalt * smoothstep(0.18, 0.0, d) * 0.35 * uPointerOn;",
+      "  gl_FragColor = vec4(col, 1.0);",
+      "}"
+    ].join("\n");
+    var shaderStarted = false;
+    var startShader = function(){
+      if (shaderStarted) return; shaderStarted = true;
+      import("https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js").then(function(THREE){
+        var renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false, powerPreference: "low-power" });
+        var DPR = Math.min(window.devicePixelRatio || 1, 1.25);
+        renderer.setPixelRatio(DPR);
+        shaderPanel.appendChild(renderer.domElement);
+        var scene = new THREE.Scene();
+        var cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        var uniforms = {
+          uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) },
+          uPointer: { value: new THREE.Vector2(9, 9) }, uPointerOn: { value: 0 }, uScroll: { value: 0 }
+        };
+        var mat = new THREE.ShaderMaterial({
+          uniforms: uniforms,
+          vertexShader: "void main(){ gl_Position = vec4(position, 1.0); }",
+          fragmentShader: FRAG
+        });
+        scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
+        var size = function(){
+          var w = shaderPanel.clientWidth, h = shaderPanel.clientHeight;
+          renderer.setSize(w, h, false);
+          uniforms.uRes.value.set(w*DPR, h*DPR);
+        };
+        size();
+        window.addEventListener("resize", size);
+        shaderPanel.addEventListener("pointermove", function(e){
+          var r = shaderPanel.getBoundingClientRect();
+          var px = (e.clientX - r.left) * DPR, py = (r.height - (e.clientY - r.top)) * DPR;
+          uniforms.uPointer.value.set(
+            (px - 0.5*uniforms.uRes.value.x) / uniforms.uRes.value.y,
+            (py - 0.5*uniforms.uRes.value.y) / uniforms.uRes.value.y);
+          uniforms.uPointerOn.value = 1;
+        });
+        shaderPanel.addEventListener("pointerleave", function(){ uniforms.uPointerOn.value = 0; });
+        var vis = false;
+        new IntersectionObserver(function(es){ es.forEach(function(en){ vis = en.isIntersecting; }); }).observe(shaderPanel);
+        var onScroll = function(){
+          var max = document.body.scrollHeight - window.innerHeight;
+          uniforms.uScroll.value = max > 0 ? clamp(window.scrollY / max, 0, 1) : 0;
+        };
+        window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+        var t = 0;
+        (function loop(){
+          requestAnimationFrame(loop);
+          if (!vis) return;
+          t += 0.016;
+          uniforms.uTime.value = t;
+          renderer.render(scene, cam);
+        })();
+      }).catch(function(){ shaderPanel.classList.add("shader-fallback"); });
+    };
+    new IntersectionObserver(function(es, obs){
+      es.forEach(function(en){ if (en.isIntersecting){ obs.disconnect(); startShader(); } });
+    }, { rootMargin: "300px" }).observe(shaderPanel);
   }
 })();
 </script>
