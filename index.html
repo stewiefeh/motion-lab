@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Motion Lab — stewiefeh studios</title>
+<meta name="description" content="A living study of advanced web motion. Every technique on this page is the demo: variable font axes, generative morphs, flow fields, scroll scrubbing, spring physics, gooey filters and decoders.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23f5c400'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+:root{
+  --ink:#17150e;
+  --paper:#f3f0e6;
+  --poster:#f5c400;
+  --cobalt:#1c39bb;
+  --white:#fcfbf6;
+  --display:'Archivo',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  font-family:var(--display);
+  background:var(--paper);
+  color:var(--ink);
+  font-variation-settings:"wdth" 100,"wght" 420;
+  font-size:17px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--cobalt);color:var(--white)}
+a{color:inherit;text-decoration:none}
+h1,h2{font-variation-settings:"wdth" 122,"wght" 780;letter-spacing:-.015em;line-height:.9;text-transform:uppercase}
+:focus-visible{outline:3px solid var(--cobalt);outline-offset:3px}
+
+/* ---------- header ---------- */
+.top{
+  position:fixed;inset:0 0 auto 0;z-index:50;
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:20px 28px;pointer-events:none;
+  mix-blend-mode:difference;color:#fff;
+}
+.top .brand{font-variation-settings:"wdth" 110,"wght" 640;font-size:15px;letter-spacing:.01em;pointer-events:auto}
+.top nav{display:flex;gap:22px;pointer-events:auto}
+.top nav a{font-size:13.5px;font-variation-settings:"wdth" 100,"wght" 500;opacity:.9}
+.top nav a:hover{opacity:1;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:640px){.top{padding:14px 16px}.top nav{display:none}}
+
+/* ---------- load orchestration ---------- */
+.js .reveal .line{display:block;overflow:hidden}
+.js .reveal .line>span{display:inline-block;transform:translateY(112%);transition:transform 1s cubic-bezier(.19,1,.22,1)}
+.js.ready .reveal .line>span{transform:translateY(0)}
+.js .wipe{position:fixed;inset:0;z-index:60;pointer-events:none;display:flex}
+.js .wipe i{flex:1;background:var(--ink);transform:scaleY(1);transform-origin:top;transition:transform .9s cubic-bezier(.76,0,.24,1)}
+.js.ready .wipe i{transform:scaleY(0)}
+.js .wipe i:nth-child(2){transition-delay:.07s}
+.js .wipe i:nth-child(3){transition-delay:.14s}
+.js .wipe i:nth-child(4){transition-delay:.21s}
+.js.ready .wipe{visibility:hidden;transition:visibility 0s .5s}
+.js .fadein{opacity:0;transform:translateY(14px);transition:opacity .8s ease .9s,transform .8s cubic-bezier(.19,1,.22,1) .9s}
+.js.ready .fadein{opacity:1;transform:none}
+
+/* ---------- hero ---------- */
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:0 5vw;position:relative}
+.hero-word{font-size:clamp(3.4rem,15.5vw,13.5rem);color:var(--ink)}
+.hero-word .ln2{color:var(--cobalt)}
+.js .hero-word{animation:heropulse 2.6s cubic-bezier(.3,.7,.2,1) .35s both}
+@keyframes heropulse{
+  0%{font-variation-settings:"wdth" 62,"wght" 300}
+  55%{font-variation-settings:"wdth" 125,"wght" 850}
+  100%{font-variation-settings:"wdth" 122,"wght" 800}
+}
+.hero-sub{margin-top:34px;max-width:34em;font-size:clamp(1rem,1.6vw,1.25rem);font-variation-settings:"wdth" 96,"wght" 430}
+.hero-sub strong{font-variation-settings:"wdth" 100,"wght" 700}
+.hero-cue{position:absolute;bottom:34px;left:5vw;font-size:12.5px;font-variation-settings:"wdth" 96,"wght" 520;letter-spacing:.06em;text-transform:uppercase;opacity:.55}
+
+/* ---------- shared section chrome ---------- */
+section{position:relative}
+.field{padding:clamp(90px,14vh,150px) 5vw}
+.field--paper{background:var(--paper);color:var(--ink)}
+.field--poster{background:var(--poster);color:var(--ink)}
+.field--ink{background:var(--ink);color:var(--paper)}
+.field--cobalt{background:var(--cobalt);color:var(--white)}
+.sec-head{margin-bottom:clamp(44px,7vh,80px);max-width:20em}
+.sec-head h2{font-size:clamp(2.6rem,8.5vw,7.2rem);margin-bottom:.35em}
+.sec-head p{font-size:clamp(1rem,1.5vw,1.2rem);font-variation-settings:"wdth" 96,"wght" 430;max-width:30em}
+.sec-head p b{font-variation-settings:"wdth" 100,"wght" 700}
+
+/* ---------- 01 axis play ---------- */
+.axis-stage{display:flex;align-items:center;min-height:52vh;overflow:hidden}
+.axis-word{font-size:clamp(3.2rem,13vw,11rem);text-transform:uppercase;line-height:1;letter-spacing:-.01em;white-space:nowrap;font-variation-settings:"wdth" 100,"wght" 500}
+.axis-word span{display:inline-block;font-variation-settings:inherit;transition:font-variation-settings .5s ease;will-change:font-variation-settings}
+.scrub-stage{margin-top:clamp(70px,10vh,120px)}
+.scrub-word{font-size:clamp(3rem,12vw,10.5rem);text-transform:uppercase;line-height:1;white-space:nowrap;color:var(--ink)}
+.js .scrub-word{animation:axisscrub linear both;animation-timeline:view();animation-range:entry 0% entry 90%}
+@keyframes axisscrub{
+  from{font-variation-settings:"wdth" 62,"wght" 250}
+  to{font-variation-settings:"wdth" 125,"wght" 900}
+}
+
+/* ---------- 02 generative morph ---------- */
+.morph-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,4vw,64px);align-items:center}
+@media(max-width:800px){.morph-wrap{grid-template-columns:1fr}}
+.blob-box svg{display:block;width:100%;height:auto}
+.morph-note{font-size:1.05rem;font-variation-settings:"wdth" 96,"wght" 430;max-width:26em}
+.morph-note .tick{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--cobalt);margin-right:8px}
+
+/* ---------- 03 flow field ---------- */
+.flow-panel{position:relative;border-radius:18px;overflow:hidden}
+.flow-panel canvas{display:block;width:100%;height:70vh;touch-action:pan-y}
+.flow-hint{position:absolute;left:22px;bottom:18px;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;opacity:.5;color:var(--paper);pointer-events:none}
+
+/* ---------- 04 scroll reel ---------- */
+.reel-section{height:340vh}
+.reel-pin{position:sticky;top:0;height:100svh;display:flex;align-items:center;overflow:hidden}
+.reel-track{display:flex;gap:clamp(18px,2.5vw,36px);padding-left:5vw;will-change:transform}
+.reel-card{
+  flex:0 0 auto;width:min(64vw,560px);height:min(62vh,520px);
+  border-radius:20px;display:flex;flex-direction:column;justify-content:space-between;
+  padding:clamp(20px,3vw,40px);
+}
+.reel-card h3{font-size:clamp(1.8rem,4.2vw,3.4rem);text-transform:uppercase;font-variation-settings:"wdth" 118,"wght" 760;line-height:.95;letter-spacing:-.01em}
+.reel-card p{font-size:1rem;max-width:24em;font-variation-settings:"wdth" 96,"wght" 430}
+.reel-card--paper{background:var(--paper);color:var(--ink)}
+.reel-card--poster{background:var(--poster);color:var(--ink)}
+.reel-card--cobalt{background:var(--cobalt);color:var(--white)}
+.reel-card--ink{background:var(--ink);color:var(--paper)}
+.reel-card--white{background:var(--white);color:var(--ink)}
+.reel-card .num{font-size:13px;font-variation-settings:"wdth" 96,"wght" 600;opacity:.55}
+
+/* ---------- 05 spring ---------- */
+.spring-play{position:relative;height:min(66vh,560px);border-radius:18px;overflow:hidden;background:var(--paper)}
+.spring-badge{
+  position:absolute;left:50%;top:50%;width:clamp(120px,16vw,180px);height:clamp(120px,16vw,180px);
+  margin:calc(clamp(120px,16vw,180px)/-2) 0 0 calc(clamp(120px,16vw,180px)/-2);
+  border-radius:50%;background:var(--cobalt);color:var(--white);
+  display:flex;align-items:center;justify-content:center;cursor:grab;
+  font-variation-settings:"wdth" 116,"wght" 780;font-size:clamp(1.1rem,2vw,1.5rem);
+  text-transform:uppercase;letter-spacing:.02em;user-select:none;touch-action:none;
+  will-change:transform;
+}
+.spring-badge:active{cursor:grabbing}
+.spring-play .ghost{position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;border:2px solid rgba(23,21,14,.25)}
+.spring-note{margin-top:20px;font-size:.95rem;opacity:.75;font-variation-settings:"wdth" 96,"wght" 430}
+
+/* ---------- 06 goo ---------- */
+.goo-panel{position:relative;height:min(70vh,600px);border-radius:18px;overflow:hidden;touch-action:pan-y}
+.goo-panel svg{width:100%;height:100%;display:block}
+.goo-big{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.goo-big span{font-size:clamp(3rem,11vw,9rem);text-transform:uppercase;font-variation-settings:"wdth" 122,"wght" 820;color:rgba(252,251,246,.14);letter-spacing:-.01em}
+
+/* ---------- 07 decode ---------- */
+.decode-list{list-style:none;max-width:900px}
+.decode-list li{border-top:1px solid rgba(243,240,230,.18)}
+.decode-list li:last-child{border-bottom:1px solid rgba(243,240,230,.18)}
+.decode-list a{
+  display:flex;justify-content:space-between;align-items:baseline;gap:18px;
+  padding:clamp(16px,2.6vh,26px) 4px;font-size:clamp(1.3rem,3.4vw,2.4rem);
+  font-variation-settings:"wdth" 112,"wght" 640;text-transform:uppercase;
+}
+.decode-list a small{font-size:.95rem;font-variation-settings:"wdth" 96,"wght" 420;opacity:.55;text-transform:none}
+.decode-list a:hover{color:var(--poster)}
+
+/* ---------- footer ---------- */
+.footer{padding:clamp(70px,10vh,110px) 5vw 46px}
+.footer .big{font-size:clamp(2rem,6vw,4.6rem);font-variation-settings:"wdth" 122,"wght" 800;text-transform:uppercase;line-height:.95;max-width:12em}
+.footer .meta{margin-top:34px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;font-size:.92rem;font-variation-settings:"wdth" 96,"wght" 460;opacity:.7}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  .js .reveal .line>span,.js .fadein{transform:none;opacity:1;transition:none}
+  .js .wipe{display:none}
+  .js .hero-word{animation:none}
+  .js .scrub-word{animation:none;font-variation-settings:"wdth" 125,"wght" 900}
+  .axis-word span{transition:none}
+}
+</style>
+</head>
+<body>
+
+<div class="wipe" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+<div class="top">
+  <a class="brand" href="#top">Motion Lab, by stewiefeh studios</a>
+  <nav aria-label="Studies">
+    <a href="#axis" data-scramble>Axis</a>
+    <a href="#morph" data-scramble>Morph</a>
+    <a href="#flow" data-scramble>Flow</a>
+    <a href="#spring" data-scramble>Spring</a>
+    <a href="#goo" data-scramble>Goo</a>
+  </nav>
+</div>
+
+<main>
+  <header class="hero" id="top">
+    <h1 class="hero-word reveal">
+      <span class="line"><span>Motion</span></span>
+      <span class="line"><span class="ln2">Lab</span></span>
+    </h1>
+    <p class="hero-sub fadein">A living study of web motion. <strong>Everything on this page is the demo:</strong> variable font axes, generative morphs, particle flow fields, scroll scrubbing, spring physics, gooey filters and text decoders, each built by hand.</p>
+    <p class="hero-cue fadein">Scroll through the studies</p>
+  </header>
+
+  <section class="field field--poster" id="axis">
+    <div class="sec-head reveal">
+      <h2 data-skew>Axis play</h2>
+      <p>One variable typeface, two live axes. <b>Move your pointer across the big word</b> and weight follows distance; the second word stretches as it enters the viewport, driven by the scroll itself.</p>
+    </div>
+    <div class="axis-stage" id="axisStage" aria-label="Pointer-reactive variable weight type">
+      <p class="axis-word" id="axisWord">STRETCH</p>
+    </div>
+    <div class="scrub-stage">
+      <p class="scrub-word" id="scrubWord">FLUID</p>
+    </div>
+  </section>
+
+  <section class="field field--paper" id="morph">
+    <div class="sec-head reveal">
+      <h2 data-skew>Generative morph</h2>
+      <p>An organic form redrawn every frame. The outline is generated from layered sine fields, so the shape never repeats and never sits still.</p>
+    </div>
+    <div class="morph-wrap">
+      <div class="blob-box">
+        <svg viewBox="0 0 600 600" role="img" aria-label="A continuously morphing organic blob">
+          <path id="blobPath" fill="#1c39bb"></path>
+        </svg>
+      </div>
+      <p class="morph-note"><span class="tick" aria-hidden="true"></span>This is not a looping video. The path data is regenerated about sixty times a second from a radial noise function, the same trick behind liquid heroes on studio sites.</p>
+    </div>
+  </section>
+
+  <section class="field field--ink" id="flow">
+    <div class="sec-head reveal">
+      <h2 data-skew>Flow field</h2>
+      <p>Seven hundred particles riding an invisible current. <b>Drag your pointer through the panel</b> to bend the field; the trails are painted by fading the canvas instead of clearing it.</p>
+    </div>
+    <div class="flow-panel">
+      <canvas id="flowCanvas" aria-label="Interactive particle flow field"></canvas>
+      <p class="flow-hint">Move through the field</p>
+    </div>
+  </section>
+
+  <section class="reel-section field--paper" id="reel" aria-label="Scroll driven horizontal reel">
+    <div class="reel-pin">
+      <div class="reel-track" id="reelTrack">
+        <article class="reel-card reel-card--ink">
+          <span class="num">Scroll scrub</span>
+          <h3>Pin, hold, translate</h3>
+          <p>The page stops here and hands your scroll to a horizontal strip. Vertical movement becomes sideways travel, one gesture, two directions.</p>
+        </article>
+        <article class="reel-card reel-card--poster">
+          <span class="num">Technique</span>
+          <h3>Sticky stage</h3>
+          <p>A tall section, a sticky viewport and a measured translation. The math is three lines; the feel is pure studio.</p>
+        </article>
+        <article class="reel-card reel-card--cobalt">
+          <span class="num">Technique</span>
+          <h3>Velocity read</h3>
+          <p>Scroll speed is measured every frame and fed back into the type across this page, so fast flicks skew the headlines and slow ones settle them.</p>
+        </article>
+        <article class="reel-card reel-card--white">
+          <span class="num">Exit</span>
+          <h3>Release</h3>
+          <p>The strip runs out, the pin releases, and the page resumes its vertical story where it left off.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="field field--poster" id="spring">
+    <div class="sec-head reveal">
+      <h2 data-skew>Spring physics</h2>
+      <p>Real integration, not a CSS easing curve. <b>Grab the disc and throw it.</b> Position and velocity are stepped through a damped spring every frame, so it snaps home with an honest wobble.</p>
+    </div>
+    <div class="spring-play" id="springPlay">
+      <span class="ghost" aria-hidden="true"></span>
+      <div class="spring-badge" id="springBadge" role="button" tabindex="0" aria-label="Draggable disc, release to spring back">Pull me</div>
+    </div>
+    <p class="spring-note">Throw hard and it overshoots; set it down gently and it barely moves. That asymmetry is what separates physics from tweening.</p>
+  </section>
+
+  <section class="field field--cobalt" id="goo">
+    <div class="sec-head reveal">
+      <h2 data-skew>Gooey merge</h2>
+      <p>A blur, a hard contrast cut, and blobs become liquid. <b>Move inside the panel:</b> satellites chase the main body and merge where they meet.</p>
+    </div>
+    <div class="goo-panel" id="gooPanel">
+      <svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <filter id="gooFilter">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="14" result="blur"/>
+            <feColorMatrix in="blur" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 26 -13" result="cut"/>
+            <feComposite in="SourceGraphic" in2="cut" operator="atop"/>
+          </filter>
+        </defs>
+        <g id="gooGroup" filter="url(#gooFilter)">
+          <circle r="46" fill="#f5c400"/>
+          <circle r="26" fill="#f5c400"/>
+          <circle r="18" fill="#f5c400"/>
+          <circle r="12" fill="#f5c400"/>
+          <circle r="9" fill="#f5c400"/>
+        </g>
+      </svg>
+      <div class="goo-big"><span>goo</span></div>
+    </div>
+  </section>
+
+  <section class="field field--ink" id="decode">
+    <div class="sec-head reveal">
+      <h2 data-skew>Decoder</h2>
+      <p>Text that resolves itself. <b>Hover each line</b> and the glyphs cycle through noise before locking, left to right, like a signal finding its frequency.</p>
+    </div>
+    <ul class="decode-list">
+      <li><a href="#axis" data-scramble>Axis play <small>variable fonts, two axes</small></a></li>
+      <li><a href="#morph" data-scramble>Generative morph <small>radial sine fields</small></a></li>
+      <li><a href="#flow" data-scramble>Flow field <small>seven hundred riders</small></a></li>
+      <li><a href="#spring" data-scramble>Spring physics <small>damped integration</small></a></li>
+      <li><a href="#goo" data-scramble>Gooey merge <small>blur plus contrast</small></a></li>
+    </ul>
+  </section>
+
+  <footer class="footer field--paper">
+    <p class="big">Every effect here is the demo.</p>
+    <div class="meta">
+      <span>Motion Lab, study 001, hand-written CSS, SVG and canvas</span>
+      <span>stewiefeh studios</span>
+    </div>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var RM = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var clamp = function(v,a,b){return Math.max(a,Math.min(b,v));};
+
+  /* load orchestration */
+  var ready = function(){ document.documentElement.classList.add("ready"); };
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(function(){ setTimeout(ready, 120); }); }
+  else { setTimeout(ready, 300); }
+
+  /* ---- velocity skew ---- */
+  var skewEls = [].slice.call(document.querySelectorAll("[data-skew]"));
+  if (!RM && skewEls.length){
+    var lastY = window.scrollY, vTarget = 0, vCur = 0;
+    window.addEventListener("scroll", function(){
+      vTarget = window.scrollY - lastY; lastY = window.scrollY;
+    }, {passive:true});
+    (function skewLoop(){
+      vCur += (vTarget - vCur) * 0.12;
+      vTarget *= 0.86;
+      var sk = clamp(vCur * 0.35, -5, 5);
+      for (var i=0;i<skewEls.length;i++){
+        skewEls[i].style.transform = "skewY(" + sk.toFixed(3) + "deg)";
+      }
+      requestAnimationFrame(skewLoop);
+    })();
+  }
+
+  /* ---- axis: pointer weight ---- */
+  var axisStage = document.getElementById("axisStage");
+  var axisWord = document.getElementById("axisWord");
+  if (axisWord){
+    var letters = axisWord.textContent.split("").map(function(ch){
+      var s = document.createElement("span"); s.textContent = ch; return s;
+    });
+    axisWord.textContent = ""; letters.forEach(function(s){ axisWord.appendChild(s); });
+    if (!RM){
+      var pending = null;
+      axisStage.addEventListener("pointermove", function(e){
+        pending = e; if (pending._raf) return;
+        pending._raf = true;
+        requestAnimationFrame(function(){
+          var r = axisWord.getBoundingClientRect();
+          var px = pending.clientX;
+          for (var i=0;i<letters.length;i++){
+            var lr = letters[i].getBoundingClientRect();
+            var d = Math.abs((lr.left + lr.width/2) - px) / (r.width/2);
+            var t = clamp(1 - d, 0, 1);
+            letters[i].style.fontVariationSettings =
+              '"wdth" ' + Math.round(78 + t*47) + ',"wght" ' + Math.round(260 + t*640);
+          }
+          pending._raf = false;
+        });
+      });
+      axisStage.addEventListener("pointerleave", function(){
+        letters.forEach(function(s){ s.style.fontVariationSettings = '"wdth" 100,"wght" 500'; });
+      });
+    }
+  }
+
+  /* ---- axis: scroll scrub fallback ---- */
+  var scrub = document.getElementById("scrubWord");
+  if (scrub && !CSS.supports("animation-timeline: view()") && !RM){
+    var sTick = false;
+    var scrubUpdate = function(){
+      sTick = false;
+      var r = scrub.getBoundingClientRect();
+      var p = clamp((window.innerHeight - r.top) / (window.innerHeight + r.height), 0, 1);
+      scrub.style.fontVariationSettings =
+        '"wdth" ' + Math.round(62 + p*63) + ',"wght" ' + Math.round(250 + p*650);
+    };
+    window.addEventListener("scroll", function(){
+      if (!sTick){ sTick = true; requestAnimationFrame(scrubUpdate); }
+    }, {passive:true});
+    scrubUpdate();
+  }
+
+  /* ---- visibility gate ---- */
+  function whenVisible(el, cb){
+    if (!("IntersectionObserver" in window)){ cb(true); return; }
+    var on = false;
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(en){ on = en.isIntersecting; });
+      cb(on);
+    }, {threshold: 0.05});
+    io.observe(el);
+  }
+
+  /* ---- generative blob ---- */
+  var blob = document.getElementById("blobPath");
+  if (blob){
+    var N = 9, CX = 300, CY = 300, R = 205;
+    var phases = [], speeds = [], amps = [];
+    for (var i=0;i<N;i++){ phases.push(Math.random()*Math.PI*2); speeds.push(0.35+Math.random()*0.5); amps.push(0.10+Math.random()*0.14); }
+    function pts(t){
+      var out = [];
+      for (var i=0;i<N;i++){
+        var a = (i/N)*Math.PI*2;
+        var r = R * (1 + amps[i]*Math.sin(t*speeds[i] + phases[i]) * Math.cos(t*0.31 + phases[i]*0.7));
+        out.push([CX + Math.cos(a)*r, CY + Math.sin(a)*r]);
+      }
+      return out;
+    }
+    function pathFrom(p){
+      var n = p.length, d = "M" + p[0][0].toFixed(1) + " " + p[0][1].toFixed(1);
+      for (var i=0;i<n;i++){
+        var p0 = p[(i-1+n)%n], p1 = p[i], p2 = p[(i+1)%n], p3 = p[(i+2)%n];
+        var c1x = p1[0] + (p2[0]-p0[0])/6, c1y = p1[1] + (p2[1]-p0[1])/6;
+        var c2x = p2[0] - (p3[0]-p1[0])/6, c2y = p2[1] - (p3[1]-p1[1])/6;
+        d += "C" + c1x.toFixed(1) + " " + c1y.toFixed(1) + " " + c2x.toFixed(1) + " " + c2y.toFixed(1) + " " + p2[0].toFixed(1) + " " + p2[1].toFixed(1);
+      }
+      return d + "Z";
+    }
+    if (RM){ blob.setAttribute("d", pathFrom(pts(0))); }
+    else {
+      var blobOn = false, blobT = Math.random()*100;
+      whenVisible(blob.closest("svg"), function(vis){
+        blobOn = vis;
+        if (vis && !blob._running){
+          blob._running = true;
+          (function loop(){
+            if (!blobOn){ blob._running = false; return; }
+            blobT += 0.016;
+            blob.setAttribute("d", pathFrom(pts(blobT)));
+            requestAnimationFrame(loop);
+          })();
+        }
+      });
+    }
+  }
+
+  /* ---- flow field canvas ---- */
+  var canvas = document.getElementById("flowCanvas");
+  if (canvas){
+    var ctx = canvas.getContext("2d");
+    var W=0, H=0, DPR=1, parts=[], PCOUNT=0;
+    var pointer = {x:-9999, y:-9999};
+    var mobile = window.matchMedia("(max-width: 700px)").matches;
+    PCOUNT = mobile ? 260 : 700;
+    function resize(){
+      DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+      W = canvas.clientWidth; H = canvas.clientHeight;
+      canvas.width = W*DPR; canvas.height = H*DPR;
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+      ctx.fillStyle = "#17150e"; ctx.fillRect(0,0,W,H);
+      parts = [];
+      for (var i=0;i<PCOUNT;i++){
+        parts.push({x:Math.random()*W, y:Math.random()*H,
+          c: ["#f5c400","#1c39bb","#fcfbf6","#f3f0e6"][Math.floor(Math.random()*4)]});
+      }
+    }
+    resize();
+    window.addEventListener("resize", resize);
+    canvas.addEventListener("pointermove", function(e){
+      var r = canvas.getBoundingClientRect();
+      pointer.x = e.clientX - r.left; pointer.y = e.clientY - r.top;
+    });
+    canvas.addEventListener("pointerleave", function(){ pointer.x = -9999; pointer.y = -9999; });
+    function field(x, y, t){
+      var s = 0.0022;
+      return (Math.sin(x*s*2 + t*0.4) + Math.cos(y*s*2 - t*0.3) + Math.sin((x+y)*s + t*0.2)) * 1.1;
+    }
+    var ft = 0, flowOn = false;
+    function step(){
+      ft += 0.006;
+      ctx.fillStyle = "rgba(23,21,14,0.075)";
+      ctx.fillRect(0,0,W,H);
+      for (var i=0;i<parts.length;i++){
+        var p = parts[i];
+        var a = field(p.x, p.y, ft);
+        var vx = Math.cos(a)*1.4, vy = Math.sin(a)*1.4;
+        var dx = p.x - pointer.x, dy = p.y - pointer.y;
+        var d2 = dx*dx + dy*dy;
+        if (d2 < 32400){
+          var d = Math.sqrt(d2) || 1;
+          vx += (dx/d) * (180 - d) * 0.05;
+          vy += (dy/d) * (180 - d) * 0.05;
+        }
+        var nx = p.x + vx, ny = p.y + vy;
+        ctx.strokeStyle = p.c; ctx.lineWidth = 1.1;
+        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(nx,ny); ctx.stroke();
+        p.x = nx; p.y = ny;
+        if (p.x < -4) p.x = W+4; if (p.x > W+4) p.x = -4;
+        if (p.y < -4) p.y = H+4; if (p.y > H+4) p.y = -4;
+      }
+      if (flowOn) requestAnimationFrame(step); else flow._running = false;
+    }
+    var flow = {running:false};
+    whenVisible(canvas, function(vis){
+      flowOn = vis;
+      if (vis && !flow._running){ flow._running = true; requestAnimationFrame(step); }
+    });
+    if (RM){ /* one static pre-painted frame only */ flowOn = false; }
+  }
+
+  /* ---- scroll reel ---- */
+  var reelSection = document.getElementById("reel");
+  var reelTrack = document.getElementById("reelTrack");
+  if (reelSection && reelTrack){
+    var rTick = false;
+    function reelUpdate(){
+      rTick = false;
+      var r = reelSection.getBoundingClientRect();
+      var total = r.height - window.innerHeight;
+      if (total <= 0) return;
+      var p = clamp(-r.top / total, 0, 1);
+      var max = Math.max(0, reelTrack.scrollWidth - window.innerWidth + window.innerWidth*0.05);
+      reelTrack.style.transform = "translate3d(" + (-p*max).toFixed(1) + "px,0,0)";
+    }
+    window.addEventListener("scroll", function(){
+      if (!rTick){ rTick = true; requestAnimationFrame(reelUpdate); }
+    }, {passive:true});
+    window.addEventListener("resize", reelUpdate);
+    reelUpdate();
+  }
+
+  /* ---- spring physics ---- */
+  var play = document.getElementById("springPlay");
+  var badge = document.getElementById("springBadge");
+  if (play && badge){
+    var bx = 0, by = 0, vx = 0, vy = 0, home = {x:0, y:0};
+    var dragging = false, lastX = 0, lastY = 0, lastT = 0, springOn = false;
+    function render(){
+      var rot = clamp(vx * 1.6, -24, 24);
+      badge.style.transform = "translate3d(" + bx.toFixed(1) + "px," + by.toFixed(1) + "px,0) rotate(" + rot.toFixed(1) + "deg)";
+    }
+    badge.addEventListener("pointerdown", function(e){
+      dragging = true; badge.setPointerCapture(e.pointerId);
+      lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
+      vx = 0; vy = 0;
+      e.preventDefault();
+    });
+    badge.addEventListener("pointermove", function(e){
+      if (!dragging) return;
+      var now = performance.now();
+      var dt = Math.max(1, now - lastT) / 1000;
+      vx = (e.clientX - lastX) / dt; vy = (e.clientY - lastY) / dt;
+      bx += e.clientX - lastX; by += e.clientY - lastY;
+      lastX = e.clientX; lastY = e.clientY; lastT = now;
+      render();
+    });
+    function release(){
+      if (!dragging) return;
+      dragging = false;
+      if (RM){ bx = 0; by = 0; vx = 0; vy = 0; render(); }
+    }
+    badge.addEventListener("pointerup", release);
+    badge.addEventListener("pointercancel", release);
+    badge.addEventListener("keydown", function(e){
+      if (e.key === "Enter" || e.key === " "){
+        e.preventDefault(); vx = (Math.random()<0.5?-1:1)*900; vy = -300;
+      }
+    });
+    var st = 0;
+    function springStep(){
+      var dt = 1/60;
+      var k = 130, c = 11;
+      vx += (-k*bx - c*vx) * dt;
+      vy += (-k*by - c*vy) * dt;
+      bx += vx * dt; by += vy * dt;
+      if (Math.abs(bx) < 0.4 && Math.abs(by) < 0.4 && Math.abs(vx) < 6 && Math.abs(vy) < 6){
+        bx = 0; by = 0; vx = 0; vy = 0; render(); spring._running = false; return;
+      }
+      render();
+      requestAnimationFrame(springStep);
+    }
+    var spring = {running:false};
+    whenVisible(play, function(vis){
+      springOn = vis;
+      if (vis && !spring._running && (Math.abs(bx)>0.1 || Math.abs(vx)>0.1)){
+        spring._running = true; requestAnimationFrame(springStep);
+      }
+    });
+    var kick = function(){
+      if (!spring._running && !dragging){ spring._running = true; requestAnimationFrame(springStep); }
+    };
+    badge.addEventListener("pointerup", function(){ setTimeout(kick, 0); });
+    badge.addEventListener("keydown", function(){ setTimeout(kick, 0); });
+  }
+
+  /* ---- gooey merge ---- */
+  var gooPanel = document.getElementById("gooPanel");
+  if (gooPanel){
+    var circles = gooPanel.querySelectorAll("#gooGroup circle");
+    var gs = [].slice.call(circles).map(function(c, i){
+      return {el:c, x:400, y:300, tx:400, ty:300, lag: 0.06 + i*0.045, drift: i*1.7};
+    });
+    var gooPointer = null, gooT = 0, gooOn = false;
+    gooPanel.addEventListener("pointermove", function(e){
+      var r = gooPanel.getBoundingClientRect();
+      var scale = 800 / r.width;
+      gooPointer = {x:(e.clientX - r.left)*scale, y:(e.clientY - r.top)*scale};
+    });
+    gooPanel.addEventListener("pointerleave", function(){ gooPointer = null; });
+    function gooStep(){
+      gooT += 0.016;
+      for (var i=0;i<gs.length;i++){
+        var g = gs[i];
+        if (gooPointer){
+          var ang = gooT*1.4 + g.drift;
+          var rad = i===0 ? 0 : 60 + i*36;
+          g.tx = gooPointer.x + Math.cos(ang)*rad;
+          g.ty = gooPointer.y + Math.sin(ang)*rad;
+        } else {
+          g.tx = 400 + Math.sin(gooT*0.7 + g.drift)*140;
+          g.ty = 300 + Math.cos(gooT*0.53 + g.drift*1.3)*100;
+        }
+        g.x += (g.tx - g.x)*g.lag*3;
+        g.y += (g.ty - g.y)*g.lag*3;
+        g.el.setAttribute("cx", g.x.toFixed(1));
+        g.el.setAttribute("cy", g.y.toFixed(1));
+      }
+      if (gooOn) requestAnimationFrame(gooStep); else goo._running = false;
+    }
+    var goo = {running:false};
+    whenVisible(gooPanel, function(vis){
+      gooOn = vis;
+      if (vis && !goo._running){ goo._running = true; requestAnimationFrame(gooStep); }
+    });
+  }
+
+  /* ---- text decoder ---- */
+  var GLYPHS = "!<>-_\\/[]{}=+*^?#________";
+  function decode(el){
+    var target = el.getAttribute("data-text") || el.childNodes[0].nodeValue;
+    if (!el.getAttribute("data-text")) el.setAttribute("data-text", target);
+    var frame = 0, total = Math.max(14, target.length * 2);
+    clearInterval(el._dec);
+    el._dec = setInterval(function(){
+      frame++;
+      var out = "";
+      var settled = Math.floor((frame/total) * target.length);
+      for (var i=0;i<target.length;i++){
+        if (i < settled) out += target[i];
+        else if (target[i] === " ") out += " ";
+        else out += GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
+      }
+      el.childNodes[0].nodeValue = out;
+      if (frame >= total){ clearInterval(el._dec); el.childNodes[0].nodeValue = target; }
+    }, 30);
+  }
+  if (!RM){
+    [].slice.call(document.querySelectorAll("[data-scramble]")).forEach(function(el){
+      el.addEventListener("pointerenter", function(){ decode(el); });
+    });
+  }
+})();
+</script>
+</body>
+</html>
