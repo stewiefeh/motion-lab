@@ -1576,10 +1576,10 @@ section{position:relative}
   var burstPanel = document.getElementById("burstPanel");
   var bursts = null, burstReady = false;
   function buildBurst(){
-    if (burstReady || !window.mo || !window.mo.Burst || !burstPanel) return;
+    if (burstReady || !window.mojs || !window.mojs.Burst || !burstPanel) return;
     burstReady = true;
     bursts = [
-      new window.mo.Burst({
+      new window.mojs.Burst({
         parent: burstPanel,
         radius: { 8: 115 }, count: 14,
         children: {
@@ -1588,7 +1588,7 @@ section{position:relative}
           scale: { 1: 0.2 }, speed: 0.9, duration: 1200
         }
       }),
-      new window.mo.Burst({
+      new window.mojs.Burst({
         parent: burstPanel,
         radius: { 4: 70 }, count: 1,
         children: {
